@@ -1,6 +1,6 @@
 'use strict'
 
-const { isClass, isFunction } = require('@supercharge/classes')
+const Cls = require('@supercharge/classes')
 
 class Pipeline {
   /**
@@ -13,7 +13,7 @@ class Pipeline {
   }
 
   /**
-   * Set the object that will be passed throught the pipeline.
+   * Set the value that will be passed throught the pipeline.
    *
    * @param {*} pipeable
    *
@@ -31,7 +31,7 @@ class Pipeline {
    * @returns {Pipeline}
    */
   through (...pipes) {
-    this.pipes = [].concat(pipes)
+    this.pipes = [].concat(...pipes)
 
     return this
   }
@@ -59,7 +59,7 @@ class Pipeline {
    */
   async then (callback) {
     const result = await this.pipes.reduce(
-      this.carry(), this.initial()
+      this.reducer(), this.initial()
     )
 
     return callback(result)
@@ -81,15 +81,15 @@ class Pipeline {
    *
    * @returns {Function}
    */
-  carry () {
+  reducer () {
     return async (carry, pipe) => {
       const parameters = await carry
 
-      if (isClass(pipe)) {
+      if (Cls.isClass(pipe)) {
         return this.handleClass(pipe, parameters)
       }
 
-      if (isFunction(pipe)) {
+      if (Cls.isFunction(pipe)) {
         return pipe(parameters)
       }
 
