@@ -6,7 +6,9 @@
   "bugs": {
     "url": "https://github.com/supercharge/pipeline/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@supercharge/classes": "~1.0.0"
+  },
   "devDependencies": {
     "@hapi/code": "~7.0.0",
     "@hapi/lab": "~21.0.0",
