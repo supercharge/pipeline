@@ -39,7 +39,6 @@ class Pipeline {
   /**
    * Set the method name to call on the pipes.
    *
-   *
    * @param {String} method
    *
    * @returns {Pipeline}
