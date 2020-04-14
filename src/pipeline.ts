@@ -1,14 +1,27 @@
 'use strict'
 
-const Cls = require('@supercharge/classes')
+import { isClass, isFunction } from '@supercharge/classes'
 
-class Pipeline {
+export class Pipeline {
   /**
-   * Create a new pipeline for the given `pipeable`.
+   * The array of class or function pipes.
    */
-  constructor (pipeable) {
-    this.pipes = []
-    this.method = 'handle'
+  private pipes: any[] = []
+
+  /**
+   * The object that will be sent through the pipeline.
+   */
+  private readonly pipeable: any
+
+  /**
+   * The method called on each pipe.
+   */
+  private method: string = 'handle'
+
+  /**
+   * Create a new pipeline instance for the given `pipeable`.
+   */
+  constructor (pipeable: any) {
     this.pipeable = pipeable
   }
 
@@ -19,7 +32,7 @@ class Pipeline {
    *
    * @returns {Pipeline}
    */
-  static send (pipeable) {
+  static send (pipeable: any): Pipeline {
     return new this(pipeable)
   }
 
@@ -30,7 +43,7 @@ class Pipeline {
    *
    * @returns {Pipeline}
    */
-  through (...pipes) {
+  through (...pipes: any[]): this {
     this.pipes = [].concat(...pipes)
 
     return this
@@ -43,7 +56,7 @@ class Pipeline {
    *
    * @returns {Pipeline}
    */
-  via (method) {
+  via (method: string): this {
     this.method = method
 
     return this
@@ -56,7 +69,7 @@ class Pipeline {
    *
    * @returns {*}
    */
-  async then (callback) {
+  async then (callback: Function): Promise<any> {
     const result = await this.pipes.reduce(
       this.reducer(), this.initial()
     )
@@ -69,8 +82,8 @@ class Pipeline {
    *
    * @returns {*}
    */
-  async thenReturn () {
-    return this.then((pipeable) => {
+  async thenReturn (): Promise<any> {
+    return await this.then((pipeable: any) => {
       return pipeable
     })
   }
@@ -81,14 +94,14 @@ class Pipeline {
    * @returns {Function}
    */
   reducer () {
-    return async (carry, pipe) => {
+    return async (carry: any, pipe: any) => {
       const parameters = await carry
 
-      if (Cls.isClass(pipe)) {
+      if (isClass(pipe)) {
         return this.handleClass(pipe, parameters)
       }
 
-      if (Cls.isFunction(pipe)) {
+      if (isFunction(pipe)) {
         return pipe(parameters)
       }
 
@@ -104,7 +117,7 @@ class Pipeline {
    *
    * @returns {*}
    */
-  handleClass (Pipe, parameters) {
+  handleClass (Pipe: any, parameters: any): any {
     const instance = new Pipe(parameters)
 
     return instance[this.method]()
@@ -115,9 +128,7 @@ class Pipeline {
    *
    * @returns {*}
    */
-  initial () {
+  initial (): any {
     return this.pipeable
   }
 }
-
-module.exports = Pipeline
