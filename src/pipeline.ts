@@ -93,7 +93,7 @@ export class Pipeline {
    *
    * @returns {Function}
    */
-  reducer () {
+  private reducer () {
     return async (carry: any, pipe: any) => {
       const parameters = await carry
 
@@ -117,7 +117,7 @@ export class Pipeline {
    *
    * @returns {*}
    */
-  handleClass (Pipe: any, parameters: any): any {
+  private handleClass (Pipe: any, parameters: any): any {
     const instance = new Pipe(parameters)
 
     return instance[this.method]()
@@ -128,7 +128,7 @@ export class Pipeline {
    *
    * @returns {*}
    */
-  initial (): any {
+  private initial (): any {
     return this.pipeable
   }
 }
