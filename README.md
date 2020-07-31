@@ -123,7 +123,7 @@ The idea for this package comes from the [Laravel](https://laravel.com) PHP fram
 
 
 ## Contributing
-Do you miss a string function? We very much appreciate your contribution! Please send in a pull request 😊
+Do you miss a function? We very much appreciate your contribution! Please send in a pull request 😊
 
 1.  Create a fork
 2.  Create your feature branch: `git checkout -b my-feature`
