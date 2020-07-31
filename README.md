@@ -50,7 +50,7 @@ Using `@supercharge/pipeline` is pretty straightforward. Pass an array of classe
 For example, you may bootstrap an application by running a series of tasks:
 
 ```js
-const App = require('./your-application)
+const App = require('./your-application')
 const Pipeline = require('@supercharge/pipeline')
 
 const app = await Pipeline
@@ -94,7 +94,7 @@ class LoadEnvironment {
 By default, the pipeline calls the `.handle()` method on class instances. You may change the method using the `Pipeline.via` method:
 
 ```js
-const App = require('./your-application)
+const App = require('./your-application')
 const Pipeline = require('@supercharge/pipeline')
 
 const app = await Pipeline
