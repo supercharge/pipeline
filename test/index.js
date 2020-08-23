@@ -1,14 +1,11 @@
 'use strict'
 
 const Pipeline = require('..')
-const Lab = require('@hapi/lab')
-const { expect } = require('@hapi/code')
 
-const { describe, it, before } = (exports.lab = Lab.script())
 let called = false
 
 describe('Pipeline', () => {
-  before(() => {
+  beforeEach(() => {
     called = false
   })
 
@@ -22,8 +19,8 @@ describe('Pipeline', () => {
         }
       ])
       .then(result => {
-        expect(called).to.be.true()
-        expect(result).to.equal('Marcus-Class-Function')
+        expect(called).toBe(true)
+        expect(result).toEqual('Marcus-Class-Function')
       })
   })
 
@@ -40,8 +37,8 @@ describe('Pipeline', () => {
         return `${result}-finished`
       })
 
-    expect(called).to.be.true()
-    expect(result).to.equal('hello-Class-finished')
+    expect(called).toBe(true)
+    expect(result).toEqual('hello-Class-finished')
   })
 
   it('thenReturn', async () => {
@@ -55,8 +52,8 @@ describe('Pipeline', () => {
       )
       .thenReturn()
 
-    expect(called).to.be.true()
-    expect(result).to.equal('this is the final result')
+    expect(called).toBe(true)
+    expect(result).toEqual('this is the final result')
   })
 
   it('via', async () => {
@@ -67,18 +64,21 @@ describe('Pipeline', () => {
         CustomMethodPipelineTask
       )
       .then(result => {
-        expect(called).to.be.true()
-        expect(result).to.equal('hello')
+        expect(called).toBe(true)
+        expect(result).toEqual('hello')
       })
   })
 
   it('throws when neither class nor function', async () => {
-    await expect(Pipeline
+    try {
+      await Pipeline
       .send('hello')
       .via('customMethodName')
       .through(123)
       .then(() => { })
-    ).to.reject()
+    } catch (error) {
+      expect(error.message).toContain('tasks must be classes or functions')
+    }
   })
 })
 
