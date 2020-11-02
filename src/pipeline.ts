@@ -2,11 +2,20 @@
 
 import { isClass, isFunction } from '@supercharge/classes'
 
+type Pipe<T> = PipeableClass<T> | PipeableFunction<T>
+
+interface PipeableClass<T> {
+  new (pipeable: T): this
+  handle: <R>() => R | Promise<R>
+}
+
+type PipeableFunction<T> = <R>(pipeable: T) => R | Promise<R>
+
 export class Pipeline<T> {
   /**
    * The array of class or function pipes.
    */
-  private pipes: any[] = []
+  private pipes: Array<Pipe<T>> = []
 
   /**
    * The object that will be sent through the pipeline.
@@ -43,8 +52,8 @@ export class Pipeline<T> {
    *
    * @returns {Pipeline}
    */
-  through (...pipes: any[]): this {
-    this.pipes = [].concat(...pipes)
+  through (...pipes: Array<Pipe<T>> | Array<Array<Pipe<T>>>): this {
+    this.pipes = ([] as Array<Pipe<T>>).concat(...pipes)
 
     return this
   }
@@ -63,29 +72,31 @@ export class Pipeline<T> {
   }
 
   /**
+   * Run the pipeline and return the result.
+   *
+   * @returns {*}
+   */
+  async thenReturn<R> (): Promise<R> {
+    return await this.then((result: R) => {
+      return result
+    })
+  }
+
+  /**
    * Run the pipeline with a final destination `callback`.
    *
    * @param {Function} callback
    *
    * @returns {*}
    */
-  async then<R> (callback: (result: R) => R): Promise<R> {
-    const result = await this.pipes.reduce(
-      this.reducer(), this.initial()
-    )
+  async then<R> (callback: Function): Promise<R> {
+    let intermediate: any = this.initial()
 
-    return callback(result)
-  }
+    for (const pipe of this.pipes) {
+      intermediate = await this.handle<R>(pipe, intermediate)
+    }
 
-  /**
-   * Run the pipeline and return the result.
-   *
-   * @returns {*}
-   */
-  async thenReturn<R> (): Promise<R> {
-    return await this.then((pipeable) => {
-      return pipeable
-    })
+    return callback(intermediate)
   }
 
   /**
@@ -93,20 +104,17 @@ export class Pipeline<T> {
    *
    * @returns {Function}
    */
-  private reducer () {
-    return async (carry: any, pipe: any) => {
-      const parameters = await carry
-
-      if (isClass(pipe)) {
-        return this.handleClass(pipe, parameters)
-      }
-
-      if (isFunction(pipe)) {
-        return pipe(parameters)
-      }
-
-      throw new Error(`Pipeline tasks must be classes or functions. Received ${typeof pipe}`)
+  private handle<R> (pipe: Pipe<T>, intermediate: T): R | Promise<R> {
+    if (isClass(pipe)) {
+      return this.handleClass(pipe, intermediate)
     }
+
+    if (isFunction(pipe)) {
+      // @ts-expect-error
+      return pipe(intermediate)
+    }
+
+    throw new Error(`Pipeline tasks must be classes or functions. Received ${typeof pipe}`)
   }
 
   /**
@@ -117,7 +125,7 @@ export class Pipeline<T> {
    *
    * @returns {*}
    */
-  private handleClass (Pipe: any, parameters: any): any {
+  private handleClass (Pipe: any, parameters: T): any {
     const instance = new Pipe(parameters)
 
     return instance[this.method]()
@@ -128,7 +136,7 @@ export class Pipeline<T> {
    *
    * @returns {*}
    */
-  private initial (): any {
+  private initial (): T {
     return this.pipeable
   }
 }
