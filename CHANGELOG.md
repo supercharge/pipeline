@@ -1,9 +1,10 @@
 # Changelog
 
 
-## [1.2.0](https://github.com/supercharge/pipeline/compare/v1.1.0...v1.2.0) - 2020-08-xx
+## [1.2.0](https://github.com/supercharge/pipeline/compare/v1.1.0...v1.2.0) - 2020-11-02
 
 ### Updated
+- refine typings
 - bump dependencies
 - change `main` entrypoint in `package.json` to `dist` folder
 - move test runner from `@hapi/lab` to `jest`
