@@ -72,10 +72,10 @@ describe('Pipeline', () => {
   it('throws when neither class nor function', async () => {
     try {
       await Pipeline
-      .send('hello')
-      .via('customMethodName')
-      .through(123)
-      .then(() => { })
+        .send('hello')
+        .via('customMethodName')
+        .through(123)
+        .then(() => { })
     } catch (error) {
       expect(error.message).toContain('tasks must be classes or functions')
     }
