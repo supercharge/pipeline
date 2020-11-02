@@ -93,7 +93,7 @@ export class Pipeline<T> {
     let intermediate: any = this.initial()
 
     for (const pipe of this.pipes) {
-      intermediate = await this.handle<R>(pipe, intermediate)
+      intermediate = await this.handle<R>(pipe, intermediate) || intermediate
     }
 
     return callback(intermediate)

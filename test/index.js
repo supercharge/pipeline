@@ -41,6 +41,33 @@ describe('Pipeline', () => {
     expect(result).toEqual('hello-Class-finished')
   })
 
+  it('returns the initial value when not returning from a step in the pipeline', async () => {
+    const result = await Pipeline
+      .send('hello')
+      .through(
+        function noop () {},
+        function noop2 () {}
+      )
+      .thenReturn()
+
+    expect(result).toEqual('hello')
+  })
+
+  it('returns the previous value when not returning from a step in the pipeline', async () => {
+    const result = await Pipeline
+      .send(1)
+      .through(
+        function noop () {},
+        function addTwo (value) {
+          return value + 2
+        },
+        function noop () {}
+      )
+      .thenReturn()
+
+    expect(result).toEqual(3)
+  })
+
   it('thenReturn', async () => {
     const result = await Pipeline
       .send('hello')
