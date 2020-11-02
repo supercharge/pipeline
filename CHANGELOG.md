@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [1.4.0](https://github.com/supercharge/pipeline/compare/v1.3.0...v1.4.0) - 2020-11-02
+
+### Added
+- return the initial or previous value when not returning from a step in the pipeline
+
+
+## [1.3.0](https://github.com/supercharge/pipeline/compare/v1.2.0...v1.3.0) - 2020-11-02
+
+### Updated
+- improved typings for arguments to the pipeline functions/classes
+
+
 ## [1.2.0](https://github.com/supercharge/pipeline/compare/v1.1.0...v1.2.0) - 2020-11-02
 
 ### Updated
