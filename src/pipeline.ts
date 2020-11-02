@@ -2,7 +2,7 @@
 
 import { isClass, isFunction } from '@supercharge/classes'
 
-export class Pipeline {
+export class Pipeline<T> {
   /**
    * The array of class or function pipes.
    */
@@ -11,7 +11,7 @@ export class Pipeline {
   /**
    * The object that will be sent through the pipeline.
    */
-  private readonly pipeable: any
+  private readonly pipeable: T
 
   /**
    * The method called on each pipe.
@@ -21,7 +21,7 @@ export class Pipeline {
   /**
    * Create a new pipeline instance for the given `pipeable`.
    */
-  constructor (pipeable: any) {
+  constructor (pipeable: T) {
     this.pipeable = pipeable
   }
 
@@ -32,7 +32,7 @@ export class Pipeline {
    *
    * @returns {Pipeline}
    */
-  static send (pipeable: any): Pipeline {
+  static send<T> (pipeable: T): Pipeline<T> {
     return new this(pipeable)
   }
 
@@ -69,7 +69,7 @@ export class Pipeline {
    *
    * @returns {*}
    */
-  async then (callback: Function): Promise<any> {
+  async then<R> (callback: (result: R) => R): Promise<R> {
     const result = await this.pipes.reduce(
       this.reducer(), this.initial()
     )
@@ -82,8 +82,8 @@ export class Pipeline {
    *
    * @returns {*}
    */
-  async thenReturn (): Promise<any> {
-    return await this.then((pipeable: any) => {
+  async thenReturn<R> (): Promise<R> {
+    return await this.then((pipeable) => {
       return pipeable
     })
   }
